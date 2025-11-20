@@ -40,17 +40,45 @@ canvas {
     to { transform: rotate(360deg); }
 }
 
+/* ---------------- HEADER ---------------- */
+header {
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:18px 22px;
+    border-bottom:1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 10;
+}
+header img {
+    height:64px;
+    border-radius:12px;
+}
+header h1 {
+    font-size:30px;
+    margin:0;
+    font-weight:800;
+    letter-spacing:0.5px;
+    background: linear-gradient(90deg, #00eaff, #4b70ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
 /* ---------------- MAIN CONTAINER ---------------- */
 .container {
     width: 90%;
     max-width: 650px;
     margin: auto;
-    padding-top: 20px;
+    padding-top: 40px;
+    padding-bottom: 60px;
     text-align: center;
 }
 
 /* Title */
-h1 {
+h1.container-title {
     font-size: 34px;
     text-shadow: 0 0 15px #9e00ff;
 }
@@ -66,6 +94,7 @@ textarea {
     font-size: 16px;
     background: rgba(255,255,255,0.1);
     color: white;
+    resize: none;
 }
 
 /* Dropdown + sliders */
@@ -81,7 +110,7 @@ select, input[type="range"] {
 }
 
 /* Buttons */
-button {
+button, #downloadLink {
     width: 100%;
     padding: 15px;
     font-size: 18px;
@@ -93,9 +122,10 @@ button {
     color: white;
     font-weight: bold;
     transition: 0.3s;
+    text-decoration: none;
+    display: inline-block;
 }
-
-button:hover {
+button:hover, #downloadLink:hover {
     transform: scale(1.03);
 }
 
@@ -105,27 +135,14 @@ audio {
     margin-top: 20px;
 }
 
-/* Header styles (logo + title) */
-header {
-    display:flex;
-    align-items:center;
-    gap:18px;
-    padding:18px 22px;
-    border-bottom:1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(8px);
-}
-header img {
-    height:64px;
-    border-radius:12px;
-}
-header h1 {
-    font-size:30px;
-    margin:0;
-    font-weight:800;
-    letter-spacing:0.5px;
-    background: linear-gradient(90deg, #00eaff, #4b70ff);
-    -webkit-background-clip: text;
-    color: transparent;
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    header h1 {
+        font-size: 24px;
+    }
+    header img {
+        height:50px;
+    }
 }
 </style>
 </head>
@@ -142,6 +159,8 @@ header h1 {
 
 <!-- ---------------- MAIN CONTAINER ---------------- -->
 <div class="container">
+    <h1 class="container-title">⚡ Nikhil AI Voice Lab</h1>
+
     <textarea id="text" placeholder="Type your text here..."></textarea>
 
     <select id="voice">
@@ -161,7 +180,7 @@ header h1 {
     <button onclick="generateVoice()">Generate Voice</button>
 
     <audio id="player" controls></audio>
-    <a id="downloadLink" style="display:none; color:#0ff; font-size:18px;" download="nikhil_voice.mp3">⬇ Download MP3</a>
+    <a id="downloadLink" style="display:none;" download="nikhil_voice.mp3">⬇ Download MP3</a>
 </div>
 
 <script>
@@ -177,7 +196,6 @@ resize();
 window.addEventListener("resize", resize);
 
 let offset = 0;
-
 function drawGrid() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.strokeStyle = "rgba(140,0,255,0.3)";
@@ -215,7 +233,8 @@ async function generateVoice() {
         return;
     }
 
-    const api = `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}`;
+    // API URL with speed & pitch
+    const api = `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}&speed=${speed}&pitch=${pitch}`;
 
     const response = await fetch(api);
     const audioBlob = await response.blob();
