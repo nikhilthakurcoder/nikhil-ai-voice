@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nikhil AI Voice Lab - Text to Speech</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        color: white;
+        text-align: center;
+        height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* AI Animated Grid Background */
+    #bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #030303;
+        background-image: 
+            linear-gradient(rgba(0,255,255,0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,255,255,0.08) 1px, transparent 1px);
+        background-size: 40px 40px;
+        animation: moveGrid 12s linear infinite;
+    }
+
+    @keyframes moveGrid {
+        0% { background-position: 0 0, 0 0; }
+        100% { background-position: 200px 200px, 200px 200px; }
+    }
+
+    /* Flowing neon tech lights */
+    .light {
+        position: absolute;
+        width: 200px;
+        height: 3px;
+        background: cyan;
+        filter: blur(4px);
+        opacity: 0.7;
+        animation: moveLight 5s linear infinite;
+    }
+
+    @keyframes moveLight {
+        0% { transform: translateX(-200px); }
+        100% { transform: translateX(120vw); }
+    }
+
+
+    /* Glass Box */
+    #box {
+        position: relative;
+        margin: 50px auto;
+        width: 90%;
+        background: rgba(255,255,255,0.08);
+        padding: 25px;
+        border-radius: 15px;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 30px rgba(0,255,255,0.3);
+    }
+
+    textarea {
+        width: 100%;
+        height: 130px;
+        border-radius: 10px;
+        border: none;
+        padding: 10px;
+        outline: none;
+        font-size: 17px;
+    }
+
+    select, button, input[type=range] {
+        padding: 12px;
+        font-size: 17px;
+        border-radius: 10px;
+        border: none;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    button {
+        background: cyan;
+        box-shadow: 0 0 12px cyan;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: white;
+    }
+
+    /* Logo */
+    .logo {
+        font-size: 45px;
+        font-weight: bold;
+        margin-top: 25px;
+        text-shadow: 0 0 25px cyan, 0 0 50px #00eaff;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+
+<!-- Neon moving tech lights -->
+<div class="light" style="top:20%; animation-delay: 0s;"></div>
+<div class="light" style="top:40%; animation-delay: 2s;"></div>
+<div class="light" style="top:60%; animation-delay: 4s;"></div>
+<div class="light" style="top:80%; animation-delay: 1s;"></div>
+
+<div class="logo">🤖 Nikhil AI Voice Lab</div>
+
+<div id="box">
+    <textarea id="text" placeholder="Yaha text likhe…"></textarea>
+
+    <select id="voiceSelect"></select>
+
+    <label>Speed: <span id="speedVal">1</span></label>
+    <input type="range" id="speed" min="0.5" max="2" value="1" step="0.1">
+
+    <label>Pitch: <span id="pitchVal">1</span></label>
+    <input type="range" id="pitch" min="0" max="2" value="1" step="0.1">
+
+    <button onclick="speak()">🔊 Speak</button>
+    <button onclick="startRecording()">🎙 Record & Download MP3</button>
+</div>
+
+
+<script>
+let voiceSelect = document.getElementById("voiceSelect");
+let speedSlider = document.getElementById("speed");
+let pitchSlider = document.getElementById("pitch");
+let speedVal = document.getElementById("speedVal");
+let pitchVal = document.getElementById("pitchVal");
+
+speedSlider.oninput = () => speedVal.innerText = speedSlider.value;
+pitchSlider.oninput = () => pitchVal.innerText = pitchSlider.value;
+
+function loadVoices() {
+    let voices = window.speechSynthesis.getVoices();
+    voiceSelect.innerHTML = "";
+
+    voices.forEach((voice, index) => {
+        let option = document.createElement("option");
+        option.value = index;
+        option.textContent = `${voice.name} — ${voice.lang}`;
+        voiceSelect.appendChild(option);
+    });
+}
+
+window.speechSynthesis.onvoiceschanged = loadVoices;
+
+function speak() {
+    let text = document.getElementById("text").value;
+    let speech = new SpeechSynthesisUtterance(text);
+
+    let voices = window.speechSynthesis.getVoices();
+    speech.voice = voices[voiceSelect.value];
+
+    speech.rate = speedSlider.value;
+    speech.pitch = pitchSlider.value;
+
+    window.speechSynthesis.speak(speech);
+}
+
+/* MP3 Download Recorder */
+let mediaRecorder;
+let audioChunks = [];
+
+async function startRecording() {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.start();
+    speak(); 
+
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+    mediaRecorder.onstop = () => {
+        let blob = new Blob(audioChunks, { type: 'audio/mp3' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement("a");
+        a.href = url;
+        a.download = "Nikhil_AI_Voice_Lab_TTS.mp3";
+        a.click();
+        audioChunks = [];
+    };
+
+    setTimeout(() => {
+        mediaRecorder.stop();
+    }, 4000);
+}
+</script>
+
+</body>
+</html>
