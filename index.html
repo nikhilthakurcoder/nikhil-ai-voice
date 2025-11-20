@@ -1,199 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Nikhil AI Voice Lab - Text to Speech</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nikhil AI Voice Lab</title>
 
 <style>
-    body {
-        margin: 0;
-        font-family: "Poppins", sans-serif;
-        color: white;
-        text-align: center;
-        height: 100vh;
-        overflow-x: hidden;
-    }
+/* ---------------- GLOBAL STYLES ---------------- */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow-x: hidden;
+    background: black;
+}
 
-    /* AI Animated Grid Background */
-    #bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #030303;
-        background-image: 
-            linear-gradient(rgba(0,255,255,0.08) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,255,255,0.08) 1px, transparent 1px);
-        background-size: 40px 40px;
-        animation: moveGrid 12s linear infinite;
-    }
+/* ---------------- ANIMATED TECH GRID BACKGROUND ---------------- */
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+}
 
-    @keyframes moveGrid {
-        0% { background-position: 0 0, 0 0; }
-        100% { background-position: 200px 200px, 200px 200px; }
-    }
+/* Purple Glow Overlay */
+.glow {
+    position: fixed;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(123,0,255,0.3), transparent);
+    animation: rotateGlow 15s infinite linear;
+    z-index: -1;
+}
 
-    /* Flowing neon tech lights */
-    .light {
-        position: absolute;
-        width: 200px;
-        height: 3px;
-        background: cyan;
-        filter: blur(4px);
-        opacity: 0.7;
-        animation: moveLight 5s linear infinite;
-    }
+@keyframes rotateGlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 
-    @keyframes moveLight {
-        0% { transform: translateX(-200px); }
-        100% { transform: translateX(120vw); }
-    }
+/* ---------------- MAIN CONTAINER ---------------- */
+.container {
+    width: 90%;
+    max-width: 650px;
+    margin: auto;
+    padding-top: 80px;
+    text-align: center;
+}
 
+/* Title */
+h1 {
+    font-size: 34px;
+    text-shadow: 0 0 15px #9e00ff;
+}
 
-    /* Glass Box */
-    #box {
-        position: relative;
-        margin: 50px auto;
-        width: 90%;
-        background: rgba(255,255,255,0.08);
-        padding: 25px;
-        border-radius: 15px;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 0 30px rgba(0,255,255,0.3);
-    }
+/* Input box */
+textarea {
+    width: 100%;
+    height: 130px;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
 
-    textarea {
-        width: 100%;
-        height: 130px;
-        border-radius: 10px;
-        border: none;
-        padding: 10px;
-        outline: none;
-        font-size: 17px;
-    }
+/* Dropdown + sliders */
+select, input[type="range"] {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
 
-    select, button, input[type=range] {
-        padding: 12px;
-        font-size: 17px;
-        border-radius: 10px;
-        border: none;
-        margin-top: 10px;
-        width: 100%;
-    }
+/* Buttons */
+button {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: linear-gradient(45deg, #6a00ff, #b300ff);
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
 
-    button {
-        background: cyan;
-        box-shadow: 0 0 12px cyan;
-        cursor: pointer;
-        font-weight: bold;
-    }
+button:hover {
+    transform: scale(1.03);
+}
 
-    button:hover {
-        background: white;
-    }
-
-    /* Logo */
-    .logo {
-        font-size: 45px;
-        font-weight: bold;
-        margin-top: 25px;
-        text-shadow: 0 0 25px cyan, 0 0 50px #00eaff;
-    }
-
+/* Audio Player */
+audio {
+    width: 100%;
+    margin-top: 20px;
+}
 </style>
 </head>
-
 <body>
 
-<div id="bg"></div>
+<canvas id="grid"></canvas>
+<div class="glow"></div>
 
-<!-- Neon moving tech lights -->
-<div class="light" style="top:20%; animation-delay: 0s;"></div>
-<div class="light" style="top:40%; animation-delay: 2s;"></div>
-<div class="light" style="top:60%; animation-delay: 4s;"></div>
-<div class="light" style="top:80%; animation-delay: 1s;"></div>
+<div class="container">
+    <h1>⚡ Nikhil AI Voice Lab</h1>
 
-<div class="logo">🤖 Nikhil AI Voice Lab</div>
+    <textarea id="text" placeholder="Type your text here..."></textarea>
 
-<div id="box">
-    <textarea id="text" placeholder="Yaha text likhe…"></textarea>
+    <select id="voice">
+        <option value="hi-IN-NeerjaNeural">Hindi – Neerja (Female)</option>
+        <option value="hi-IN-MadhurNeural">Hindi – Madhur (Male)</option>
+        <option value="en-US-AriaNeural">English – Aria (Female)</option>
+        <option value="en-US-GuyNeural">English – Guy (Male)</option>
+        <option value="en-US-AdamMultilingualNeural">Adam Multilingual (Premium)</option>
+    </select>
 
-    <select id="voiceSelect"></select>
-
-    <label>Speed: <span id="speedVal">1</span></label>
+    <label>Speed</label>
     <input type="range" id="speed" min="0.5" max="2" value="1" step="0.1">
 
-    <label>Pitch: <span id="pitchVal">1</span></label>
+    <label>Pitch</label>
     <input type="range" id="pitch" min="0" max="2" value="1" step="0.1">
 
-    <button onclick="speak()">🔊 Speak</button>
-    <button onclick="startRecording()">🎙 Record & Download MP3</button>
+    <button onclick="generateVoice()">Generate Voice</button>
+
+    <audio id="player" controls></audio>
+    <a id="downloadLink" style="display:none; color:#0ff; font-size:18px;" download="nikhil_voice.mp3">⬇ Download MP3</a>
 </div>
 
-
 <script>
-let voiceSelect = document.getElementById("voiceSelect");
-let speedSlider = document.getElementById("speed");
-let pitchSlider = document.getElementById("pitch");
-let speedVal = document.getElementById("speedVal");
-let pitchVal = document.getElementById("pitchVal");
+/* ---------------- ANIMATED TECH GRID ---------------- */
+const canvas = document.getElementById("grid");
+const ctx = canvas.getContext("2d");
 
-speedSlider.oninput = () => speedVal.innerText = speedSlider.value;
-pitchSlider.oninput = () => pitchVal.innerText = pitchSlider.value;
-
-function loadVoices() {
-    let voices = window.speechSynthesis.getVoices();
-    voiceSelect.innerHTML = "";
-
-    voices.forEach((voice, index) => {
-        let option = document.createElement("option");
-        option.value = index;
-        option.textContent = `${voice.name} — ${voice.lang}`;
-        voiceSelect.appendChild(option);
-    });
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
+resize();
+window.addEventListener("resize", resize);
 
-window.speechSynthesis.onvoiceschanged = loadVoices;
+let offset = 0;
 
-function speak() {
-    let text = document.getElementById("text").value;
-    let speech = new SpeechSynthesisUtterance(text);
+function drawGrid() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle = "rgba(140,0,255,0.3)";
+    ctx.lineWidth = 1;
 
-    let voices = window.speechSynthesis.getVoices();
-    speech.voice = voices[voiceSelect.value];
+    offset += 0.5;
 
-    speech.rate = speedSlider.value;
-    speech.pitch = pitchSlider.value;
+    for (let i = -50; i < canvas.width; i += 40) {
+        ctx.beginPath();
+        ctx.moveTo(i + offset, 0);
+        ctx.lineTo(i + offset, canvas.height);
+        ctx.stroke();
+    }
 
-    window.speechSynthesis.speak(speech);
+    for (let j = -50; j < canvas.height; j += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, j + offset);
+        ctx.lineTo(canvas.width, j + offset);
+        ctx.stroke();
+    }
+
+    requestAnimationFrame(drawGrid);
 }
+drawGrid();
 
-/* MP3 Download Recorder */
-let mediaRecorder;
-let audioChunks = [];
+/* ---------------- TEXT TO SPEECH ENGINE ---------------- */
+async function generateVoice() {
+    const text = document.getElementById("text").value;
+    const voice = document.getElementById("voice").value;
+    const speed = document.getElementById("speed").value;
+    const pitch = document.getElementById("pitch").value;
 
-async function startRecording() {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
+    if (!text) {
+        alert("Please type something!");
+        return;
+    }
 
-    mediaRecorder.start();
-    speak(); 
+    const api = `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}`;
 
-    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    const response = await fetch(api);
+    const audioBlob = await response.blob();
+    const audioURL = URL.createObjectURL(audioBlob);
 
-    mediaRecorder.onstop = () => {
-        let blob = new Blob(audioChunks, { type: 'audio/mp3' });
-        let url = URL.createObjectURL(blob);
-        let a = document.createElement("a");
-        a.href = url;
-        a.download = "Nikhil_AI_Voice_Lab_TTS.mp3";
-        a.click();
-        audioChunks = [];
-    };
+    document.getElementById("player").src = audioURL;
 
-    setTimeout(() => {
-        mediaRecorder.stop();
-    }, 4000);
+    const link = document.getElementById("downloadLink");
+    link.href = audioURL;
+    link.style.display = "block";
 }
 </script>
 
