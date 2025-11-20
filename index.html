@@ -45,7 +45,7 @@ canvas {
     width: 90%;
     max-width: 650px;
     margin: auto;
-    padding-top: 80px;
+    padding-top: 20px;
     text-align: center;
 }
 
@@ -104,6 +104,29 @@ audio {
     width: 100%;
     margin-top: 20px;
 }
+
+/* Header styles (logo + title) */
+header {
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:18px 22px;
+    border-bottom:1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+}
+header img {
+    height:64px;
+    border-radius:12px;
+}
+header h1 {
+    font-size:30px;
+    margin:0;
+    font-weight:800;
+    letter-spacing:0.5px;
+    background: linear-gradient(90deg, #00eaff, #4b70ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
 </style>
 </head>
 <body>
@@ -111,9 +134,14 @@ audio {
 <canvas id="grid"></canvas>
 <div class="glow"></div>
 
-<div class="container">
-    <h1>⚡ Nikhil AI Voice Lab</h1>
+<!-- ---------------- HEADER WITH LOGO ---------------- -->
+<header>
+    <img src="logo.png.png" alt="Nikhil AI Voice Lab Logo">
+    <h1>Nikhil AI Voice Lab</h1>
+</header>
 
+<!-- ---------------- MAIN CONTAINER ---------------- -->
+<div class="container">
     <textarea id="text" placeholder="Type your text here..."></textarea>
 
     <select id="voice">
