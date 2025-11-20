@@ -12,10 +12,10 @@ body {
     font-family: 'Arial', sans-serif;
     color: white;
     overflow-x: hidden;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    background: linear-gradient(135deg, #0a0a0a, #1f1f3f, #0a0a0a);
 }
 
-/* ---------------- STATIC TECH GRID ---------------- */
+/* ---------------- STATIC NEON GRID + DOTS ---------------- */
 canvas {
     position: fixed;
     top: 0;
@@ -30,8 +30,8 @@ canvas {
     position: fixed;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 30% 30%, rgba(138, 43, 226, 0.25), transparent 70%),
-                radial-gradient(circle at 70% 70%, rgba(0, 191, 255, 0.2), transparent 60%);
+    background: radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.3), transparent 70%),
+                radial-gradient(circle at 80% 70%, rgba(0, 191, 255, 0.25), transparent 60%);
     z-index: -1;
 }
 
@@ -76,7 +76,7 @@ header h1 {
 h1.container-title {
     font-size: 36px;
     margin-bottom: 25px;
-    text-shadow: 0 0 20px #9e00ff;
+    text-shadow: 0 0 25px #9e00ff, 0 0 50px #4b70ff;
 }
 
 /* Input box */
@@ -88,7 +88,7 @@ textarea {
     border: none;
     outline: none;
     font-size: 16px;
-    background: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.05);
     color: white;
     resize: none;
 }
@@ -101,7 +101,7 @@ select, input[type="range"] {
     border-radius: 10px;
     border: none;
     outline: none;
-    background: rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.1);
     color: white;
 }
 
@@ -112,7 +112,7 @@ label span {
 }
 
 /* Buttons */
-button, #downloadLink {
+button {
     width: 100%;
     padding: 15px;
     font-size: 18px;
@@ -125,17 +125,9 @@ button, #downloadLink {
     font-weight: bold;
     transition: 0.3s;
     text-decoration: none;
-    display: inline-block;
 }
-button:hover, #downloadLink:hover {
+button:hover {
     transform: scale(1.03);
-}
-
-/* Audio Player */
-audio {
-    width: 100%;
-    margin-top: 20px;
-    border-radius: 10px;
 }
 
 /* Responsive adjustments */
@@ -167,11 +159,8 @@ audio {
     <textarea id="text" placeholder="Type your text here..."></textarea>
 
     <select id="voice">
-        <option value="hi-IN-NeerjaNeural">Hindi – Neerja (Female)</option>
-        <option value="hi-IN-MadhurNeural">Hindi – Madhur (Male)</option>
-        <option value="en-US-AriaNeural">English – Aria (Female)</option>
-        <option value="en-US-GuyNeural">English – Guy (Male)</option>
-        <option value="en-US-AdamMultilingualNeural">Adam Multilingual (Premium)</option>
+        <option value="hi-IN">Hindi</option>
+        <option value="en-US">English</option>
     </select>
 
     <label>Speed: <span id="speedVal">1</span></label>
@@ -183,13 +172,10 @@ audio {
         oninput="document.getElementById('pitchVal').innerText=this.value">
 
     <button onclick="generateVoice()">Generate Voice</button>
-
-    <audio id="player" controls></audio>
-    <a id="downloadLink" style="display:none;" download="nikhil_voice.mp3">⬇ Download MP3</a>
 </div>
 
 <script>
-/* ---------------- STATIC GRID ---------------- */
+/* ---------------- STATIC NEON GRID ---------------- */
 const canvas = document.getElementById("grid");
 const ctx = canvas.getContext("2d");
 
@@ -202,67 +188,56 @@ window.addEventListener("resize", resize);
 
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Neon grid lines
     ctx.strokeStyle = "rgba(138,43,226,0.2)";
     ctx.lineWidth = 1;
-
-    // Vertical lines
-    for (let i = 0; i < canvas.width; i += 40) {
+    for(let x = 0; x < canvas.width; x += 50){
         ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, canvas.height);
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+    for(let y = 0; y < canvas.height; y += 50){
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
         ctx.stroke();
     }
 
-    // Horizontal lines
-    for (let j = 0; j < canvas.height; j += 40) {
+    // Random neon dots
+    for(let i = 0; i < 200; i++){
+        const dotX = Math.random() * canvas.width;
+        const dotY = Math.random() * canvas.height;
+        ctx.fillStyle = "rgba(0,255,255,0.15)";
         ctx.beginPath();
-        ctx.moveTo(0, j);
-        ctx.lineTo(canvas.width, j);
-        ctx.stroke();
+        ctx.arc(dotX, dotY, 2, 0, Math.PI * 2);
+        ctx.fill();
     }
 }
-
-// Draw grid once
 drawGrid();
 
-/* ---------------- TEXT TO SPEECH ---------------- */
-async function generateVoice() {
+/* ---------------- BROWSER TTS ---------------- */
+function generateVoice() {
     const text = document.getElementById("text").value;
-    const voice = document.getElementById("voice").value;
-    const speed = document.getElementById("speed").value;
-    const pitch = document.getElementById("pitch").value;
+    const voiceLang = document.getElementById("voice").value;
+    const speed = parseFloat(document.getElementById("speed").value);
+    const pitch = parseFloat(document.getElementById("pitch").value);
 
     if (!text) {
         alert("Please type something!");
         return;
     }
 
-    const button = document.querySelector("button");
-    button.disabled = true;
-    button.innerText = "Generating...";
+    const synth = window.speechSynthesis;
+    const utter = new SpeechSynthesisUtterance(text);
 
-    // API URL
-    const api = `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}&speed=${speed}&pitch=${pitch}`;
+    utter.lang = voiceLang;
+    utter.rate = speed;
+    utter.pitch = pitch;
 
-    try {
-        const response = await fetch(api);
-        const audioBlob = await response.blob();
-        const audioURL = URL.createObjectURL(audioBlob);
-
-        const player = document.getElementById("player");
-        player.src = audioURL;
-        player.play();
-
-        const link = document.getElementById("downloadLink");
-        link.href = audioURL;
-        link.style.display = "block";
-    } catch(err) {
-        alert("Error generating voice. Try again.");
-        console.error(err);
-    } finally {
-        button.disabled = false;
-        button.innerText = "Generate Voice";
-    }
+    synth.cancel(); // stop any current speech
+    synth.speak(utter);
 }
 </script>
 
