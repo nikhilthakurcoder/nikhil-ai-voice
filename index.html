@@ -9,13 +9,13 @@
 /* ---------------- GLOBAL STYLES ---------------- */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     color: white;
     overflow-x: hidden;
-    background: black;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
 }
 
-/* ---------------- ANIMATED TECH GRID BACKGROUND ---------------- */
+/* ---------------- STATIC TECH GRID ---------------- */
 canvas {
     position: fixed;
     top: 0;
@@ -25,19 +25,14 @@ canvas {
     z-index: -2;
 }
 
-/* Purple Glow Overlay */
+/* Soft Glow Overlay */
 .glow {
     position: fixed;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(123,0,255,0.3), transparent);
-    animation: rotateGlow 15s infinite linear;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 30%, rgba(138, 43, 226, 0.25), transparent 70%),
+                radial-gradient(circle at 70% 70%, rgba(0, 191, 255, 0.2), transparent 60%);
     z-index: -1;
-}
-
-@keyframes rotateGlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
 }
 
 /* ---------------- HEADER ---------------- */
@@ -46,11 +41,11 @@ header {
     align-items:center;
     gap:18px;
     padding:18px 22px;
-    border-bottom:1px solid rgba(255,255,255,0.12);
+    border-bottom:1px solid rgba(255,255,255,0.1);
     backdrop-filter: blur(8px);
     position: sticky;
     top: 0;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.5);
     z-index: 10;
 }
 header img {
@@ -72,15 +67,16 @@ header h1 {
     width: 90%;
     max-width: 650px;
     margin: auto;
-    padding-top: 40px;
+    padding-top: 50px;
     padding-bottom: 60px;
     text-align: center;
 }
 
 /* Title */
 h1.container-title {
-    font-size: 34px;
-    text-shadow: 0 0 15px #9e00ff;
+    font-size: 36px;
+    margin-bottom: 25px;
+    text-shadow: 0 0 20px #9e00ff;
 }
 
 /* Input box */
@@ -88,11 +84,11 @@ textarea {
     width: 100%;
     height: 130px;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: none;
     outline: none;
     font-size: 16px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.08);
     color: white;
     resize: none;
 }
@@ -105,8 +101,14 @@ select, input[type="range"] {
     border-radius: 10px;
     border: none;
     outline: none;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.12);
     color: white;
+}
+
+/* Sliders label */
+label span {
+    font-weight: bold;
+    margin-left: 8px;
 }
 
 /* Buttons */
@@ -133,6 +135,7 @@ button:hover, #downloadLink:hover {
 audio {
     width: 100%;
     margin-top: 20px;
+    border-radius: 10px;
 }
 
 /* Responsive adjustments */
@@ -151,9 +154,9 @@ audio {
 <canvas id="grid"></canvas>
 <div class="glow"></div>
 
-<!-- ---------------- HEADER WITH LOGO ---------------- -->
+<!-- ---------------- HEADER ---------------- -->
 <header>
-    <img src="logo.png.png" alt="Nikhil AI Voice Lab Logo">
+    <img src="logo.png" alt="Nikhil AI Voice Lab Logo">
     <h1>Nikhil AI Voice Lab</h1>
 </header>
 
@@ -171,11 +174,13 @@ audio {
         <option value="en-US-AdamMultilingualNeural">Adam Multilingual (Premium)</option>
     </select>
 
-    <label>Speed</label>
-    <input type="range" id="speed" min="0.5" max="2" value="1" step="0.1">
+    <label>Speed: <span id="speedVal">1</span></label>
+    <input type="range" id="speed" min="0.5" max="2" value="1" step="0.1" 
+        oninput="document.getElementById('speedVal').innerText=this.value">
 
-    <label>Pitch</label>
-    <input type="range" id="pitch" min="0" max="2" value="1" step="0.1">
+    <label>Pitch: <span id="pitchVal">1</span></label>
+    <input type="range" id="pitch" min="0" max="2" value="1" step="0.1"
+        oninput="document.getElementById('pitchVal').innerText=this.value">
 
     <button onclick="generateVoice()">Generate Voice</button>
 
@@ -184,7 +189,7 @@ audio {
 </div>
 
 <script>
-/* ---------------- ANIMATED TECH GRID ---------------- */
+/* ---------------- STATIC GRID ---------------- */
 const canvas = document.getElementById("grid");
 const ctx = canvas.getContext("2d");
 
@@ -195,33 +200,32 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-let offset = 0;
 function drawGrid() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.strokeStyle = "rgba(140,0,255,0.3)";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "rgba(138,43,226,0.2)";
     ctx.lineWidth = 1;
 
-    offset += 0.5;
-
-    for (let i = -50; i < canvas.width; i += 40) {
+    // Vertical lines
+    for (let i = 0; i < canvas.width; i += 40) {
         ctx.beginPath();
-        ctx.moveTo(i + offset, 0);
-        ctx.lineTo(i + offset, canvas.height);
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvas.height);
         ctx.stroke();
     }
 
-    for (let j = -50; j < canvas.height; j += 40) {
+    // Horizontal lines
+    for (let j = 0; j < canvas.height; j += 40) {
         ctx.beginPath();
-        ctx.moveTo(0, j + offset);
-        ctx.lineTo(canvas.width, j + offset);
+        ctx.moveTo(0, j);
+        ctx.lineTo(canvas.width, j);
         ctx.stroke();
     }
-
-    requestAnimationFrame(drawGrid);
 }
+
+// Draw grid once
 drawGrid();
 
-/* ---------------- TEXT TO SPEECH ENGINE ---------------- */
+/* ---------------- TEXT TO SPEECH ---------------- */
 async function generateVoice() {
     const text = document.getElementById("text").value;
     const voice = document.getElementById("voice").value;
@@ -233,18 +237,32 @@ async function generateVoice() {
         return;
     }
 
-    // API URL with speed & pitch
+    const button = document.querySelector("button");
+    button.disabled = true;
+    button.innerText = "Generating...";
+
+    // API URL
     const api = `https://api.streamelements.com/kappa/v2/speech?voice=${voice}&text=${encodeURIComponent(text)}&speed=${speed}&pitch=${pitch}`;
 
-    const response = await fetch(api);
-    const audioBlob = await response.blob();
-    const audioURL = URL.createObjectURL(audioBlob);
+    try {
+        const response = await fetch(api);
+        const audioBlob = await response.blob();
+        const audioURL = URL.createObjectURL(audioBlob);
 
-    document.getElementById("player").src = audioURL;
+        const player = document.getElementById("player");
+        player.src = audioURL;
+        player.play();
 
-    const link = document.getElementById("downloadLink");
-    link.href = audioURL;
-    link.style.display = "block";
+        const link = document.getElementById("downloadLink");
+        link.href = audioURL;
+        link.style.display = "block";
+    } catch(err) {
+        alert("Error generating voice. Try again.");
+        console.error(err);
+    } finally {
+        button.disabled = false;
+        button.innerText = "Generate Voice";
+    }
 }
 </script>
 
