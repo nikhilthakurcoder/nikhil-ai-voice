@@ -106,7 +106,7 @@
         <strong>Notes</strong>
         <ol>
           <li>Device voices vary. Android Chrome gives most voices.</li>
-          <li>Server download calls: <code>https://nikhil-ai-tts-backend.onrender.com/tts</code> (already configured).</li>
+          <li>Server download calls: <code>https://tts-server-81xq.onrender.com/tts</code> (already configured).</li>
           <li>If you want me to remove server and use only client-side, tell me.</li>
         </ol>
       </div>
@@ -120,12 +120,10 @@
 </div>
 
 <script>
-  // Local time
   const localTime = document.getElementById('localTime');
   function updateLocalTime(){ localTime.textContent = new Date().toLocaleString(); }
   updateLocalTime(); setInterval(updateLocalTime,60000);
 
-  // UI refs
   const textEl = document.getElementById('text');
   const playBtn = document.getElementById('play');
   const pauseBtn = document.getElementById('pause');
@@ -146,7 +144,6 @@
   rateEl.addEventListener('input', ()=> rateVal.textContent = rateEl.value);
   pitchEl.addEventListener('input', ()=> pitchVal.textContent = pitchEl.value);
 
-  // SpeechSynthesis
   let synth = window.speechSynthesis;
   let voices = [];
 
@@ -177,12 +174,11 @@
     list.forEach(v=>{
       const d = document.createElement('div');
       d.style.padding='6px'; d.style.borderBottom='1px solid rgba(255,255,255,0.01)';
-      d.innerHTML = `<strong>${v.name}</strong> <span style="float:right;color:var(--muted)">${v.lang}</span><div class="small" style="clear:both;color:var(--muted)">${v.localService ? 'Local' : 'Remote'}</div>`;
-      voicesWrap.appendChild(d);
+      d.innerinnerHTML = `<strong>${v.name}</strong> <span style="float:right;color:var(--muted)">${v.lang}</span><div class="small" style="clear:both;color:var(--muted)">${v.localService ? 'Local' : 'Remote'}</div>`;
+      voicesWrap.appenChild(d);
     });
   }
 
-  // PRESETS (frontend)
   const PRESETS = [
     {id:'deep_american', label:'Deep American Male', lang:'en', pitch:0.7, rate:0.92},
     {id:'deep_calm', label:'Deep Calm Male', lang:'en', pitch:0.65, rate:0.9},
@@ -191,7 +187,7 @@
     {id:'hindi_male', label:'Hindi Male', lang:'hi', pitch:0.75, rate:0.95},
     {id:'hindi_female', label:'Hindi Female', lang:'hi', pitch:1.1, rate:1.02},
     {id:'robotic', label:'Robotic (server/meSpeak)', lang:'en', pitch:1.0, rate:1.0},
-    {id:'fast_narrator', label:'Fast Narrator', lang:'en', pitch:1.0, rate:1.35},
+    {id:'fast_narrator', label:'Fast Narrator', lang:'en', pitch:1.35, rate:1.0},
     {id:'mixed_deep', label:'Mixed Deep', lang:'en', pitch:0.7, rate:0.95}
   ];
 
@@ -203,7 +199,6 @@
     });
   }
 
-  // map frontend preset to server preset ids (server expects some ids)
   const SERVER_PRESET_MAP = {
     'deep_american':'deep_american',
     'deep_calm':'deep_calm',
@@ -217,13 +212,6 @@
   };
   function getServerPreset(frontendId){ return SERVER_PRESET_MAP[frontendId] || 'clear_neutral'; }
 
-  // speak with device voices
-  function findVoiceForPreset(preset){
-    const cand = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(preset.lang));
-    if(cand.length) return cand[0];
-    return voices[0] || null;
-  }
-
   let currentUtterance = null;
   function speakText(){
     const txt = textEl.value.trim(); if(!txt) return alert('Enter text first.');
@@ -231,15 +219,14 @@
     const presetId = presetSelect.value;
     const preset = PRESETS.find(p=>p.id===presetId) || {};
     const u = new SpeechSynthesisUtterance(txt);
-    // pick selected device voice if any
     const voiceVal = voiceSelect.value;
     if(voiceVal){
       const [name,lang] = voiceVal.split('|');
       const v = voices.find(x=>x.name===name && x.lang===lang);
       if(v) u.voice = v;
     } else if(preset.lang){
-      const v = findVoiceForPreset(preset);
-      if(v) u.voice = v;
+      const cand = voices.filter(v => v.lang.toLowerCase().startsWith(preset.lang));
+      if(cand.length) u.voice = cand[0];
     }
     u.rate = preset.rate || parseFloat(rateEl.value);
     u.pitch = preset.pitch || parseFloat(pitchEl.value);
@@ -259,21 +246,17 @@
     try{ await navigator.clipboard.writeText(textEl.value); copyBtn.textContent='Copied ✓'; setTimeout(()=>copyBtn.textContent='📋 Copy',1200); }catch(e){ alert('Clipboard not available: ' + e); }
   });
 
-  // ----- Client-side meSpeak (robotic download) -----
   let meSpeakReady = false;
   (async function loadMeSpeak(){
     try{
       await loadScript('https://cdn.jsdelivr.net/npm/mespeak/mespeak.min.js');
-      // load config and voice files as text to avoid CORS issues
       const cfg = await fetch('https://cdn.jsdelivr.net/npm/mespeak/mespeak_config.json').then(r=>r.text());
       const vjson = await fetch('https://cdn.jsdelivr.net/npm/mespeak/voices/en/en.json').then(r=>r.json());
-      // inject config and voice
       const s = document.createElement('script'); s.type='application/javascript'; s.text = cfg; document.head.appendChild(s);
       meSpeak.loadVoice(vjson);
       meSpeakReady = true;
     }catch(e){
       meSpeakReady = false;
-      // console.warn('meSpeak load failed', e);
     }
   })();
 
@@ -292,9 +275,8 @@
     }catch(e){ alert('Download failed: ' + e); }
   });
 
-  // ----- Server-based download (good for iPhone) -----
-  // NOTE: server URL provided (already configured). If you deploy your own backend, replace this URL.
-  const SERVER_TTS_URL = 'https://nikhil-ai-tts-backend.onrender.com/tts';
+  // ⭐⭐⭐ FIXED BACKEND URL HERE ⭐⭐⭐
+  const SERVER_TTS_URL = "https://tts-server-81xq.onrender.com/tts";
 
   async function downloadServerAudio(fmt='mp3'){
     const txt = textEl.value.trim(); if(!txt) return alert('Enter text first.');
@@ -321,7 +303,6 @@
   }
   downloadServer.addEventListener('click', ()=> downloadServerAudio('mp3'));
 
-  // ---- helpers ----
   function loadScript(src, asText=false){
     return new Promise((resolve,reject)=>{
       if(asText){
@@ -334,30 +315,17 @@
     });
   }
 
-  // voices changed
   if('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = loadVoices;
   loadVoices();
 
-  // language filter
   langFilter.addEventListener('change', ()=>{
     const val = langFilter.value;
     const filtered = voices.filter(v => v.lang && (val ? v.lang.toLowerCase().startsWith(val) : (v.lang.toLowerCase().startsWith('en') || v.lang.toLowerCase().startsWith('hi')) ));
     populateVoiceList(filtered); renderVoicesPanel(filtered);
   });
 
-  // fallback hint
   setTimeout(()=> { if(!voices.length) voicesWrap.innerHTML = '<div style="padding:8px;color:var(--muted)">No voices detected. Try Chrome on Android and ensure TTS voice data (Google) installed in device settings.</div>'; },800);
-
-  // quick UX: select deep preset by default
   setTimeout(()=>{ if(presetSelect.options.length) presetSelect.value = 'deep_american'; },400);
-
-  // accessibility
-  textEl.addEventListener('keydown',(e)=>{ if(e.ctrlKey && e.key==='Enter') speakText(); });
-  document.addEventListener('click', ()=>{ if(!voices.length) loadVoices(); }, {once:true});
-
-  // Expose local image path you uploaded earlier (if you want to show it)
-  // Local file path (already uploaded earlier): /mnt/data/IMG_0193.png
-  console.log('If you want to reference your uploaded image: /mnt/data/IMG_0193.png');
 
 </script>
 </body>
