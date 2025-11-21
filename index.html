@@ -1,216 +1,332 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ElevenLabs Clone</title>
-  <style>
-    /* Reset */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      background-color: #121212;
-      color: #fff;
-      line-height: 1.5;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      background: #1a1a1a;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      border-bottom: 1px solid #333;
-    }
-
-    header .logo {
-      font-weight: 900;
-      font-size: 1.5rem;
-      color: #14f195;
-      letter-spacing: 2px;
-      cursor: pointer;
-    }
-
-    nav a {
-      color: #aaa;
-      margin-left: 1.5rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.3s ease;
-      font-size: 0.9rem;
-    }
-
-    nav a:hover {
-      color: #14f195;
-    }
-
-    .hero {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1140px;
-      margin: 3rem auto 5rem;
-      padding: 0 2rem;
-    }
-
-    .hero-text {
-      max-width: 500px;
-    }
-
-    .hero-text h1 {
-      font-size: 3rem;
-      font-weight: 900;
-      margin-bottom: 1rem;
-      background: linear-gradient(90deg, #14f195, #00ffc8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-text p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-      color: #ccc;
-    }
-
-    .hero-text button {
-      background: #14f195;
-      border: none;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      color: #121212;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .hero-text button:hover {
-      background: #00cca3;
-    }
-
-    .hero-image {
-      flex: 1;
-      min-width: 300px;
-      max-width: 600px;
-      margin-left: 2rem;
-      filter: drop-shadow(0 15px 25px rgba(20, 241, 149, 0.3));
-    }
-
-    .features {
-      max-width: 1140px;
-      margin: 0 auto 5rem;
-      padding: 0 2rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
-      gap: 2rem;
-    }
-
-    .feature-card {
-      background: #1a1a1a;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 8px 30px rgb(20 241 149 / 0.2);
-      transition: transform 0.3s ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-10px);
-    }
-
-    .feature-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: #14f195;
-    }
-
-    .feature-card p {
-      color: #bbb;
-      font-size: 1rem;
-      line-height: 1.4;
-    }
-
-    footer {
-      background: #1a1a1a;
-      text-align: center;
-      padding: 2rem;
-      color: #666;
-      font-size: 0.9rem;
-      border-top: 1px solid #333;
-    }
-
-    @media (max-width: 768px) {
-      .hero {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .hero-image {
-        margin: 2rem 0 0;
-        max-width: 100%;
-      }
-
-      nav a {
-        margin-left: 1rem;
-      }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sunil TTS — English + Hindi (Presets)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b1220;--muted:#9aa6b2;--accent:#6f5cff}
+  *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef6;background:
+  radial-gradient(800px 300px at 10% 10%, rgba(111,92,255,0.10), transparent),#071321;padding:22px;min-height:100vh;display:flex;align-items:center;justify-content:center}
+  .wrap{width:100%;max-width:980px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
+  header{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#00b5ff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#041428}
+  h1{margin:0;font-size:18px} .lead{margin:0;color:var(--muted);font-size:13px}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-top:14px}
+  @media(max-width:920px){.grid{grid-template-columns:1fr}}
+  .card{background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+  textarea{width:100%;min-height:200px;padding:12px;border-radius:10px;border:none;background:rgba(255,255,255,0.02);color:inherit;resize:vertical;font-size:15px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .btn{background:linear-gradient(180deg,var(--accent),#5e3bff);color:#fff;padding:10px 12px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--muted)}
+  select,input[type=range]{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);background:transparent;color:inherit}
+  .small{font-size:13px;color:var(--muted)}
+  .voices-list{max-height:140px;overflow:auto;padding:6px;border-radius:8px;border:1px dashed rgba(255,255,255,0.02)}
+  footer{display:flex;justify-content:space-between;margin-top:12px;font-size:13px;color:var(--muted)}
+  .pill{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:999px}
+</style>
 </head>
 <body>
+<div class="wrap" role="main">
   <header>
-    <div class="logo">ELEVENLABS</div>
-    <nav>
-      <a href="#product">Product</a>
-      <a href="#docs">Docs</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#blog">Blog</a>
-      <a href="#signin">Sign In</a>
-      <a href="#signup" style="color:#14f195; font-weight:700;">Sign Up</a>
-    </nav>
+    <div class="logo">TTS</div>
+    <div>
+      <h1>Sunil TTS — English & Hindi</h1>
+      <p class="lead">10+ voice presets (deep/bright), no API, mobile-first. Playback via device voices. Download robotic WAV included.</p>
+    </div>
   </header>
 
-  <section class="hero" id="product">
-    <div class="hero-text">
-      <h1>Build with the Most Advanced AI Speech Platform</h1>
-      <p>ElevenLabs offers industry-leading text-to-speech and speech-to-text APIs to create natural, expressive voice interactions.</p>
-      <button onclick="alert('Signup feature coming soon!')">Get Started for Free</button>
-    </div>
-    <img
-      src="https://i.imgur.com/4q6vE4L.png"
-      alt="AI Voice Illustration"
-      class="hero-image"
-    />
-  </section>
+  <div class="grid">
+    <div class="card">
+      <textarea id="text" placeholder="Type text here... (English or Hindi)"></textarea>
 
-  <section class="features">
-    <div class="feature-card">
-      <h3>Ultra-Realistic Voices</h3>
-      <p>Leverage state-of-the-art neural voice modeling for the most human-like speech synthesis.</p>
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+        <div style="flex:1">
+          <label class="small">Preset</label>
+          <select id="preset"></select>
+        </div>
+        <div style="width:160px">
+          <label class="small">Voice</label>
+          <select id="voice"></select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+        <div style="flex:1">
+          <label class="small">Speed</label>
+          <input id="rate" type="range" min="0.6" max="1.8" step="0.05" value="1.0">
+          <div class="small">Value: <span id="rateVal">1.0</span></div>
+        </div>
+        <div style="width:160px">
+          <label class="small">Pitch</label>
+          <input id="pitch" type="range" min="0.5" max="2.0" step="0.05" value="1.0">
+          <div class="small">Value: <span id="pitchVal">1.0</span></div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="play" class="btn">▶ Generate & Play</button>
+        <button id="pause" class="btn secondary">⏸ Pause</button>
+        <button id="resume" class="btn secondary">▶ Resume</button>
+        <button id="stop" class="btn secondary">✖ Stop</button>
+        <button id="downloadRobot" class="btn">⤓ Download (robotic)</button>
+        <button id="copy" class="btn secondary">📋 Copy</button>
+      </div>
+
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <div class="pill">English + Hindi</div><div class="pill">No API</div><div class="pill">Mobile-first</div>
+      </div>
+
+      <div class="small" style="margin-top:8px;color:var(--muted)">
+        Tip: For best voices on Android use Chrome and ensure Google TTS engine voice data installed (English US/UK and Hindi).
+      </div>
     </div>
-    <div class="feature-card">
-      <h3>Custom Voice Cloning</h3>
-      <p>Create customizable voice models instantly from a few minutes of audio.</p>
-    </div>
-    <div class="feature-card">
-      <h3>Simple API Integration</h3>
-      <p>Easy-to-use REST APIs designed for developers with detailed documentation.</p>
-    </div>
-    <div class="feature-card">
-      <h3>Multilingual Support</h3>
-      <p>Supports multiple languages and accents to fit global audiences.</p>
-    </div>
-  </section>
+
+    <aside>
+      <div class="card" style="margin-bottom:10px">
+        <div>
+          <label class="small">Language Filter</label>
+          <select id="lang">
+            <option value="">All</option>
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+          </select>
+        </div>
+
+        <div style="margin-top:10px">
+          <label class="small">Available voices</label>
+          <div id="voicesWrap" class="voices-list small">Loading voices...</div>
+        </div>
+      </div>
+
+      <div class="card small">
+        <strong>Notes</strong>
+        <ol>
+          <li>Browser voices vary by device. Android Chrome gives most options.</li>
+          <li>Download (robotic) uses meSpeak.js (included). Real voices cannot be downloaded client-side reliably.</li>
+        </ol>
+      </div>
+    </aside>
+  </div>
 
   <footer>
-    &copy; 2024 ElevenLabs Clone. All rights reserved.
+    <div>Made for you • Mobile ready</div>
+    <div id="localTime"></div>
   </footer>
+</div>
+
+<script>
+  // Local time
+  const localTime = document.getElementById('localTime');
+  function updateLocalTime(){ localTime.textContent = new Date().toLocaleString(); }
+  updateLocalTime(); setInterval(updateLocalTime,60000);
+
+  // UI
+  const textEl = document.getElementById('text');
+  const playBtn = document.getElementById('play');
+  const pauseBtn = document.getElementById('pause');
+  const resumeBtn = document.getElementById('resume');
+  const stopBtn = document.getElementById('stop');
+  const copyBtn = document.getElementById('copy');
+  const downloadRobot = document.getElementById('downloadRobot');
+
+  const voiceSelect = document.getElementById('voice');
+  const presetSelect = document.getElementById('preset');
+  const langFilter = document.getElementById('lang');
+  const voicesWrap = document.getElementById('voicesWrap');
+
+  const rateEl = document.getElementById('rate'), pitchEl = document.getElementById('pitch');
+  const rateVal = document.getElementById('rateVal'), pitchVal = document.getElementById('pitchVal');
+
+  rateEl.addEventListener('input', ()=> rateVal.textContent = rateEl.value);
+  pitchEl.addEventListener('input', ()=> pitchVal.textContent = pitchEl.value);
+
+  // SpeechSynthesis voices
+  let synth = window.speechSynthesis;
+  let voices = [];
+
+  function loadVoices(){
+    voices = synth.getVoices() || [];
+    // filter to English/Hindi only for our UI
+    const filtered = voices.filter(v => v.lang && (v.lang.toLowerCase().startsWith('en') || v.lang.toLowerCase().startsWith('hi')));
+    populateVoiceList(filtered);
+    renderVoicesPanel(filtered);
+    populatePresets(); // re-populate presets to map to available voices
+  }
+
+  function populateVoiceList(list){
+    voiceSelect.innerHTML = '';
+    list.forEach((v,i)=>{
+      const opt = document.createElement('option');
+      opt.value = v.name+'|'+v.lang;
+      opt.textContent = `${v.name} — ${v.lang}${v.localService ? ' • local' : ''}`;
+      voiceSelect.appendChild(opt);
+    });
+  }
+
+  function renderVoicesPanel(list){
+    if(!list.length){
+      voicesWrap.innerHTML = '<div style="padding:8px;color:var(--muted)">No English/Hindi voices detected on this device yet.</div>';
+      return;
+    }
+    voicesWrap.innerHTML = '';
+    list.forEach(v=>{
+      const d = document.createElement('div');
+      d.style.padding='6px'; d.style.borderBottom='1px solid rgba(255,255,255,0.01)';
+      d.innerHTML = `<strong>${v.name}</strong> <span style="float:right;color:var(--muted)">${v.lang}</span><div class="small" style="clear:both;color:var(--muted)">${v.localService ? 'Local' : 'Remote'}</div>`;
+      voicesWrap.appendChild(d);
+    });
+  }
+
+  // Presets (10+). Each preset defines preferred language and adjustments.
+  const PRESETS = [
+    {id:'en-deep-1', label:'English — Deep Male 1', lang:'en', pitch:0.7, rate:0.9},
+    {id:'en-deep-2', label:'English — Deep Male 2', lang:'en', pitch:0.65, rate:0.85},
+    {id:'en-mid-1', label:'English — Mid (US Natural)', lang:'en', pitch:1.0, rate:1.0},
+    {id:'en-bright', label:'English — Bright Female', lang:'en', pitch:1.4, rate:1.05},
+    {id:'en-fast', label:'English — Fast Speaker', lang:'en', pitch:1.0, rate:1.4},
+    {id:'hi-deep-1', label:'Hindi — Deep Male', lang:'hi', pitch:0.75, rate:0.95},
+    {id:'hi-mid', label:'Hindi — Natural', lang:'hi', pitch:1.0, rate:1.0},
+    {id:'hi-bright', label:'Hindi — Bright Female', lang:'hi', pitch:1.3, rate:1.05},
+    {id:'en-robotic', label:'English — Robotic (meSpeak)', lang:'en', pitch:1.0, rate:1.0, useMespeak:true},
+    {id:'mixed-deep', label:'Mixed — Deep Variety', lang:'en', pitch:0.7, rate:0.95}
+  ];
+
+  function populatePresets(){
+    presetSelect.innerHTML = '';
+    PRESETS.forEach(p=>{
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.label;
+      presetSelect.appendChild(opt);
+    });
+  }
+
+  // map preset -> best matching voice (by lang)
+  function findVoiceForPreset(preset){
+    // prefer exact language start match (e.g., 'en' -> en-US, en-GB)
+    const cand = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(preset.lang));
+    if(cand.length) return cand[0]; // pick first best available
+    // fallback: any voice
+    return voices[0] || null;
+  }
+
+  // speak function uses selected preset to set voice/pitch/rate
+  let currentUtterance = null;
+  function speakText(){
+    const txt = textEl.value.trim();
+    if(!txt){ alert('Please enter text.'); return; }
+    if(synth.speaking) synth.cancel();
+
+    const presetId = presetSelect.value;
+    const preset = PRESETS.find(p=>p.id===presetId) || {};
+    const u = new SpeechSynthesisUtterance(txt);
+
+    // pick voice from voiceSelect if meaningful else pick via preset mapping
+    let selectedVoice = null;
+    const voiceVal = voiceSelect.value;
+    if(voiceVal){
+      // voiceVal is "name|lang"
+      const [name,lang] = voiceVal.split('|');
+      selectedVoice = voices.find(v=>v.name===name && v.lang===lang);
+    }
+    if(!selectedVoice && preset.lang){
+      selectedVoice = findVoiceForPreset(preset);
+    }
+    if(selectedVoice) u.voice = selectedVoice;
+
+    // apply preset pitch/rate or UI values
+    u.rate = preset.rate || parseFloat(rateEl.value);
+    u.pitch = preset.pitch || parseFloat(pitchEl.value);
+    // volume left as default
+    u.volume = 1.0;
+
+    // UI
+    playBtn.textContent='🔊 Playing...'; playBtn.disabled=true;
+    u.onend = ()=> { playBtn.textContent='▶ Generate & Play'; playBtn.disabled=false; };
+    u.onerror = (e)=> { alert('Speech error: ' + (e?.error || e?.message || e)); playBtn.textContent='▶ Generate & Play'; playBtn.disabled=false; };
+
+    currentUtterance = u;
+    synth.speak(u);
+  }
+
+  // Attach buttons
+  playBtn.addEventListener('click', speakText);
+  pauseBtn.addEventListener('click', ()=> { if(synth.speaking && !synth.paused) synth.pause(); });
+  resumeBtn.addEventListener('click', ()=> { if(synth.paused) synth.resume(); });
+  stopBtn.addEventListener('click', ()=> { if(synth.speaking) synth.cancel(); });
+  copyBtn.addEventListener('click', async ()=>{
+    try { await navigator.clipboard.writeText(textEl.value); copyBtn.textContent='Copied ✓'; setTimeout(()=>copyBtn.textContent='📋 Copy',1200); }catch(e){ alert('Clipboard not available: ' + e); }
+  });
+
+  // mespeak integration for robotic downloadable wav
+  // meSpeak files hosted via jsDelivr
+  (async function loadMeSpeakAssets(){
+    try{
+      // load config
+      await loadScript('https://cdn.jsdelivr.net/npm/mespeak/mespeak.min.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/mespeak/mespeak_config.json', true);
+      // fetch voice json and load
+      const vresp = await fetch('https://cdn.jsdelivr.net/npm/mespeak/voices/en/en.json');
+      const vjson = await vresp.json(); meSpeak.loadVoice(vjson);
+      window.meSpeakReady = true;
+    }catch(e){
+      // keep silent — download button will degrade gracefully
+      window.meSpeakReady = false;
+    }
+  })();
+
+  downloadRobot.addEventListener('click', ()=>{
+    if(!window.meSpeakReady){ alert('Offline download engine not ready on this device. Try again or use desktop.'); return; }
+    const txt = textEl.value.trim(); if(!txt){ alert('Enter text first.'); return; }
+    try{
+      const wavBase64 = meSpeak.generateWAV(txt,{rawdata:false,wordgap:0});
+      const byteCharacters = atob(wavBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for(let i=0;i<byteCharacters.length;i++) byteNumbers[i]=byteCharacters.charCodeAt(i);
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray],{type:'audio/wav'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download='tts.wav'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }catch(e){ alert('Download failed: ' + e); }
+  });
+
+  // helpers
+  function loadScript(src, asText=false){
+    return new Promise((resolve,reject)=>{
+      if(asText){
+        fetch(src).then(r=>r.text()).then(txt=>{
+          const s = document.createElement('script'); s.type='application/javascript'; s.text = txt; document.head.appendChild(s); resolve();
+        }).catch(reject);
+        return;
+      }
+      const s = document.createElement('script'); s.src=src; s.onload=()=>setTimeout(resolve,50); s.onerror=reject; document.head.appendChild(s);
+    });
+  }
+
+  // voices changed hook
+  if('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = loadVoices;
+  loadVoices();
+
+  // language filter
+  langFilter.addEventListener('change', ()=>{
+    const val = langFilter.value;
+    const filtered = voices.filter(v => v.lang && (val ? v.lang.toLowerCase().startsWith(val) : (v.lang.toLowerCase().startsWith('en') || v.lang.toLowerCase().startsWith('hi')) ));
+    populateVoiceList(filtered);
+    renderVoicesPanel(filtered);
+  });
+
+  // fallback hint
+  setTimeout(()=> {
+    if(!voices.length) voicesWrap.innerHTML = '<div style="padding:8px;color:var(--muted)">No voices detected. Try Chrome on Android and ensure TTS voice data (Google) installed in device settings.</div>';
+  },800);
+
+  // small accessibility
+  textEl.addEventListener('keydown',(e)=>{ if(e.ctrlKey && e.key==='Enter') speakText(); });
+
+  // If user clicks anywhere, attempt to load voices (some browsers require user gesture)
+  document.addEventListener('click', ()=>{ if(!voices.length) loadVoices(); }, {once:true});
+</script>
 </body>
 </html>
