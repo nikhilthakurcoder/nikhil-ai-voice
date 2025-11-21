@@ -6,9 +6,9 @@
 <title>Sunil TTS — English + Hindi (Presets)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0b1220;--muted:#9aa6b2;--accent:#6f5cff}
+  :root{--bg:#071321;--card:#0b1220;--muted:#9aa6b2;--accent:#6f5cff}
   *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef6;background:
-  radial-gradient(800px 300px at 10% 10%, rgba(111,92,255,0.10), transparent),#071321;padding:22px;min-height:100vh;display:flex;align-items:center;justify-content:center}
+  radial-gradient(800px 300px at 10% 10%, rgba(111,92,255,0.10), transparent),var(--bg);padding:18px;min-height:100vh;display:flex;align-items:center;justify-content:center}
   .wrap{width:100%;max-width:980px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
   header{display:flex;gap:12px;align-items:center;margin-bottom:10px}
   .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#00b5ff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#041428}
@@ -25,6 +25,7 @@
   .voices-list{max-height:140px;overflow:auto;padding:6px;border-radius:8px;border:1px dashed rgba(255,255,255,0.02)}
   footer{display:flex;justify-content:space-between;margin-top:12px;font-size:13px;color:var(--muted)}
   .pill{background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:999px}
+  .hint{font-size:13px;color:var(--muted);margin-top:10px}
 </style>
 </head>
 <body>
@@ -33,13 +34,13 @@
     <div class="logo">TTS</div>
     <div>
       <h1>Sunil TTS — English & Hindi</h1>
-      <p class="lead">10+ voice presets (deep/bright), no API, mobile-first. Playback via device voices. Download robotic WAV included.</p>
+      <p class="lead">10+ presets • Play • Download (Server) • Download (Robotic) • Mobile friendly</p>
     </div>
   </header>
 
   <div class="grid">
     <div class="card">
-      <textarea id="text" placeholder="Type text here... (English or Hindi)"></textarea>
+      <textarea id="text" placeholder="Type text here... (English or Hindi)">Hello! This is a demo. Type anything and test the presets.</textarea>
 
       <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
         <div style="flex:1">
@@ -47,7 +48,7 @@
           <select id="preset"></select>
         </div>
         <div style="width:160px">
-          <label class="small">Voice</label>
+          <label class="small">Voice (device)</label>
           <select id="voice"></select>
         </div>
       </div>
@@ -70,16 +71,17 @@
         <button id="pause" class="btn secondary">⏸ Pause</button>
         <button id="resume" class="btn secondary">▶ Resume</button>
         <button id="stop" class="btn secondary">✖ Stop</button>
-        <button id="downloadRobot" class="btn">⤓ Download (robotic)</button>
+        <button id="downloadServer" class="btn">⬇ Download (Server)</button>
+        <button id="downloadRobot" class="btn">⤓ Download (Robotic)</button>
         <button id="copy" class="btn secondary">📋 Copy</button>
       </div>
 
       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-        <div class="pill">English + Hindi</div><div class="pill">No API</div><div class="pill">Mobile-first</div>
+        <div class="pill">English + Hindi</div><div class="pill">No paid API</div><div class="pill">Mobile-first</div>
       </div>
 
-      <div class="small" style="margin-top:8px;color:var(--muted)">
-        Tip: For best voices on Android use Chrome and ensure Google TTS engine voice data installed (English US/UK and Hindi).
+      <div class="hint">
+        <strong>Note:</strong> Use <em>Download (Server)</em> on iPhone for reliable MP3 downloads. <em>Download (Robotic)</em> is client-side (meSpeak) — works best on Android/Desktop.
       </div>
     </div>
 
@@ -95,7 +97,7 @@
         </div>
 
         <div style="margin-top:10px">
-          <label class="small">Available voices</label>
+          <label class="small">Available voices (device)</label>
           <div id="voicesWrap" class="voices-list small">Loading voices...</div>
         </div>
       </div>
@@ -103,8 +105,9 @@
       <div class="card small">
         <strong>Notes</strong>
         <ol>
-          <li>Browser voices vary by device. Android Chrome gives most options.</li>
-          <li>Download (robotic) uses meSpeak.js (included). Real voices cannot be downloaded client-side reliably.</li>
+          <li>Device voices vary. Android Chrome gives most voices.</li>
+          <li>Server download calls: <code>https://nikhil-ai-tts-backend.onrender.com/tts</code> (already configured).</li>
+          <li>If you want me to remove server and use only client-side, tell me.</li>
         </ol>
       </div>
     </aside>
@@ -122,7 +125,7 @@
   function updateLocalTime(){ localTime.textContent = new Date().toLocaleString(); }
   updateLocalTime(); setInterval(updateLocalTime,60000);
 
-  // UI
+  // UI refs
   const textEl = document.getElementById('text');
   const playBtn = document.getElementById('play');
   const pauseBtn = document.getElementById('pause');
@@ -130,6 +133,7 @@
   const stopBtn = document.getElementById('stop');
   const copyBtn = document.getElementById('copy');
   const downloadRobot = document.getElementById('downloadRobot');
+  const downloadServer = document.getElementById('downloadServer');
 
   const voiceSelect = document.getElementById('voice');
   const presetSelect = document.getElementById('preset');
@@ -142,17 +146,16 @@
   rateEl.addEventListener('input', ()=> rateVal.textContent = rateEl.value);
   pitchEl.addEventListener('input', ()=> pitchVal.textContent = pitchEl.value);
 
-  // SpeechSynthesis voices
+  // SpeechSynthesis
   let synth = window.speechSynthesis;
   let voices = [];
 
   function loadVoices(){
     voices = synth.getVoices() || [];
-    // filter to English/Hindi only for our UI
     const filtered = voices.filter(v => v.lang && (v.lang.toLowerCase().startsWith('en') || v.lang.toLowerCase().startsWith('hi')));
     populateVoiceList(filtered);
     renderVoicesPanel(filtered);
-    populatePresets(); // re-populate presets to map to available voices
+    populatePresets();
   }
 
   function populateVoiceList(list){
@@ -179,107 +182,104 @@
     });
   }
 
-  // Presets (10+). Each preset defines preferred language and adjustments.
+  // PRESETS (frontend)
   const PRESETS = [
-    {id:'en-deep-1', label:'English — Deep Male 1', lang:'en', pitch:0.7, rate:0.9},
-    {id:'en-deep-2', label:'English — Deep Male 2', lang:'en', pitch:0.65, rate:0.85},
-    {id:'en-mid-1', label:'English — Mid (US Natural)', lang:'en', pitch:1.0, rate:1.0},
-    {id:'en-bright', label:'English — Bright Female', lang:'en', pitch:1.4, rate:1.05},
-    {id:'en-fast', label:'English — Fast Speaker', lang:'en', pitch:1.0, rate:1.4},
-    {id:'hi-deep-1', label:'Hindi — Deep Male', lang:'hi', pitch:0.75, rate:0.95},
-    {id:'hi-mid', label:'Hindi — Natural', lang:'hi', pitch:1.0, rate:1.0},
-    {id:'hi-bright', label:'Hindi — Bright Female', lang:'hi', pitch:1.3, rate:1.05},
-    {id:'en-robotic', label:'English — Robotic (meSpeak)', lang:'en', pitch:1.0, rate:1.0, useMespeak:true},
-    {id:'mixed-deep', label:'Mixed — Deep Variety', lang:'en', pitch:0.7, rate:0.95}
+    {id:'deep_american', label:'Deep American Male', lang:'en', pitch:0.7, rate:0.92},
+    {id:'deep_calm', label:'Deep Calm Male', lang:'en', pitch:0.65, rate:0.9},
+    {id:'clear_neutral', label:'Clear Neutral Male', lang:'en', pitch:1.0, rate:1.0},
+    {id:'english_female', label:'English Female', lang:'en', pitch:1.15, rate:1.02},
+    {id:'hindi_male', label:'Hindi Male', lang:'hi', pitch:0.75, rate:0.95},
+    {id:'hindi_female', label:'Hindi Female', lang:'hi', pitch:1.1, rate:1.02},
+    {id:'robotic', label:'Robotic (server/meSpeak)', lang:'en', pitch:1.0, rate:1.0},
+    {id:'fast_narrator', label:'Fast Narrator', lang:'en', pitch:1.0, rate:1.35},
+    {id:'mixed_deep', label:'Mixed Deep', lang:'en', pitch:0.7, rate:0.95}
   ];
 
   function populatePresets(){
     presetSelect.innerHTML = '';
     PRESETS.forEach(p=>{
       const opt = document.createElement('option');
-      opt.value = p.id;
-      opt.textContent = p.label;
-      presetSelect.appendChild(opt);
+      opt.value = p.id; opt.textContent = p.label; presetSelect.appendChild(opt);
     });
   }
 
-  // map preset -> best matching voice (by lang)
+  // map frontend preset to server preset ids (server expects some ids)
+  const SERVER_PRESET_MAP = {
+    'deep_american':'deep_american',
+    'deep_calm':'deep_calm',
+    'clear_neutral':'clear_neutral',
+    'english_female':'english_female',
+    'hindi_male':'hindi_male',
+    'hindi_female':'hindi_female',
+    'robotic':'robotic',
+    'fast_narrator':'fast_narrator',
+    'mixed_deep':'mixed_deep'
+  };
+  function getServerPreset(frontendId){ return SERVER_PRESET_MAP[frontendId] || 'clear_neutral'; }
+
+  // speak with device voices
   function findVoiceForPreset(preset){
-    // prefer exact language start match (e.g., 'en' -> en-US, en-GB)
     const cand = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(preset.lang));
-    if(cand.length) return cand[0]; // pick first best available
-    // fallback: any voice
+    if(cand.length) return cand[0];
     return voices[0] || null;
   }
 
-  // speak function uses selected preset to set voice/pitch/rate
   let currentUtterance = null;
   function speakText(){
-    const txt = textEl.value.trim();
-    if(!txt){ alert('Please enter text.'); return; }
+    const txt = textEl.value.trim(); if(!txt) return alert('Enter text first.');
     if(synth.speaking) synth.cancel();
-
     const presetId = presetSelect.value;
     const preset = PRESETS.find(p=>p.id===presetId) || {};
     const u = new SpeechSynthesisUtterance(txt);
-
-    // pick voice from voiceSelect if meaningful else pick via preset mapping
-    let selectedVoice = null;
+    // pick selected device voice if any
     const voiceVal = voiceSelect.value;
     if(voiceVal){
-      // voiceVal is "name|lang"
       const [name,lang] = voiceVal.split('|');
-      selectedVoice = voices.find(v=>v.name===name && v.lang===lang);
+      const v = voices.find(x=>x.name===name && x.lang===lang);
+      if(v) u.voice = v;
+    } else if(preset.lang){
+      const v = findVoiceForPreset(preset);
+      if(v) u.voice = v;
     }
-    if(!selectedVoice && preset.lang){
-      selectedVoice = findVoiceForPreset(preset);
-    }
-    if(selectedVoice) u.voice = selectedVoice;
-
-    // apply preset pitch/rate or UI values
     u.rate = preset.rate || parseFloat(rateEl.value);
     u.pitch = preset.pitch || parseFloat(pitchEl.value);
-    // volume left as default
     u.volume = 1.0;
-
-    // UI
     playBtn.textContent='🔊 Playing...'; playBtn.disabled=true;
     u.onend = ()=> { playBtn.textContent='▶ Generate & Play'; playBtn.disabled=false; };
     u.onerror = (e)=> { alert('Speech error: ' + (e?.error || e?.message || e)); playBtn.textContent='▶ Generate & Play'; playBtn.disabled=false; };
-
-    currentUtterance = u;
-    synth.speak(u);
+    currentUtterance = u; synth.speak(u);
   }
 
-  // Attach buttons
   playBtn.addEventListener('click', speakText);
   pauseBtn.addEventListener('click', ()=> { if(synth.speaking && !synth.paused) synth.pause(); });
   resumeBtn.addEventListener('click', ()=> { if(synth.paused) synth.resume(); });
   stopBtn.addEventListener('click', ()=> { if(synth.speaking) synth.cancel(); });
+
   copyBtn.addEventListener('click', async ()=>{
-    try { await navigator.clipboard.writeText(textEl.value); copyBtn.textContent='Copied ✓'; setTimeout(()=>copyBtn.textContent='📋 Copy',1200); }catch(e){ alert('Clipboard not available: ' + e); }
+    try{ await navigator.clipboard.writeText(textEl.value); copyBtn.textContent='Copied ✓'; setTimeout(()=>copyBtn.textContent='📋 Copy',1200); }catch(e){ alert('Clipboard not available: ' + e); }
   });
 
-  // mespeak integration for robotic downloadable wav
-  // meSpeak files hosted via jsDelivr
-  (async function loadMeSpeakAssets(){
+  // ----- Client-side meSpeak (robotic download) -----
+  let meSpeakReady = false;
+  (async function loadMeSpeak(){
     try{
-      // load config
       await loadScript('https://cdn.jsdelivr.net/npm/mespeak/mespeak.min.js');
-      await loadScript('https://cdn.jsdelivr.net/npm/mespeak/mespeak_config.json', true);
-      // fetch voice json and load
-      const vresp = await fetch('https://cdn.jsdelivr.net/npm/mespeak/voices/en/en.json');
-      const vjson = await vresp.json(); meSpeak.loadVoice(vjson);
-      window.meSpeakReady = true;
+      // load config and voice files as text to avoid CORS issues
+      const cfg = await fetch('https://cdn.jsdelivr.net/npm/mespeak/mespeak_config.json').then(r=>r.text());
+      const vjson = await fetch('https://cdn.jsdelivr.net/npm/mespeak/voices/en/en.json').then(r=>r.json());
+      // inject config and voice
+      const s = document.createElement('script'); s.type='application/javascript'; s.text = cfg; document.head.appendChild(s);
+      meSpeak.loadVoice(vjson);
+      meSpeakReady = true;
     }catch(e){
-      // keep silent — download button will degrade gracefully
-      window.meSpeakReady = false;
+      meSpeakReady = false;
+      // console.warn('meSpeak load failed', e);
     }
   })();
 
   downloadRobot.addEventListener('click', ()=>{
-    if(!window.meSpeakReady){ alert('Offline download engine not ready on this device. Try again or use desktop.'); return; }
-    const txt = textEl.value.trim(); if(!txt){ alert('Enter text first.'); return; }
+    if(!meSpeakReady){ alert('Offline engine not ready on this device. Try Download (Server) or use Android/PC.'); return; }
+    const txt = textEl.value.trim(); if(!txt) return alert('Enter text first.');
     try{
       const wavBase64 = meSpeak.generateWAV(txt,{rawdata:false,wordgap:0});
       const byteCharacters = atob(wavBase64);
@@ -288,11 +288,40 @@
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray],{type:'audio/wav'});
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download='tts.wav'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      const a = document.createElement('a'); a.href = url; a.download = 'tts.wav'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     }catch(e){ alert('Download failed: ' + e); }
   });
 
-  // helpers
+  // ----- Server-based download (good for iPhone) -----
+  // NOTE: server URL provided (already configured). If you deploy your own backend, replace this URL.
+  const SERVER_TTS_URL = 'https://nikhil-ai-tts-backend.onrender.com/tts';
+
+  async function downloadServerAudio(fmt='mp3'){
+    const txt = textEl.value.trim(); if(!txt) return alert('Enter text first.');
+    const preset = getServerPreset(presetSelect.value);
+    try{
+      downloadServer.textContent = 'Preparing...'; downloadServer.disabled = true;
+      const res = await fetch(SERVER_TTS_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ text: txt, preset: preset, format: fmt })
+      });
+      if(!res.ok){
+        const j = await res.json().catch(()=>null);
+        throw new Error(j?.error || 'Server error');
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = `tts.${fmt}`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    }catch(e){
+      alert('Download failed: ' + (e.message || e));
+    }finally{
+      downloadServer.textContent = '⬇ Download (Server)'; downloadServer.disabled = false;
+    }
+  }
+  downloadServer.addEventListener('click', ()=> downloadServerAudio('mp3'));
+
+  // ---- helpers ----
   function loadScript(src, asText=false){
     return new Promise((resolve,reject)=>{
       if(asText){
@@ -301,11 +330,11 @@
         }).catch(reject);
         return;
       }
-      const s = document.createElement('script'); s.src=src; s.onload=()=>setTimeout(resolve,50); s.onerror=reject; document.head.appendChild(s);
+      const s = document.createElement('script'); s.src = src; s.onload = ()=> setTimeout(resolve,50); s.onerror = reject; document.head.appendChild(s);
     });
   }
 
-  // voices changed hook
+  // voices changed
   if('onvoiceschanged' in speechSynthesis) speechSynthesis.onvoiceschanged = loadVoices;
   loadVoices();
 
@@ -313,20 +342,23 @@
   langFilter.addEventListener('change', ()=>{
     const val = langFilter.value;
     const filtered = voices.filter(v => v.lang && (val ? v.lang.toLowerCase().startsWith(val) : (v.lang.toLowerCase().startsWith('en') || v.lang.toLowerCase().startsWith('hi')) ));
-    populateVoiceList(filtered);
-    renderVoicesPanel(filtered);
+    populateVoiceList(filtered); renderVoicesPanel(filtered);
   });
 
   // fallback hint
-  setTimeout(()=> {
-    if(!voices.length) voicesWrap.innerHTML = '<div style="padding:8px;color:var(--muted)">No voices detected. Try Chrome on Android and ensure TTS voice data (Google) installed in device settings.</div>';
-  },800);
+  setTimeout(()=> { if(!voices.length) voicesWrap.innerHTML = '<div style="padding:8px;color:var(--muted)">No voices detected. Try Chrome on Android and ensure TTS voice data (Google) installed in device settings.</div>'; },800);
 
-  // small accessibility
+  // quick UX: select deep preset by default
+  setTimeout(()=>{ if(presetSelect.options.length) presetSelect.value = 'deep_american'; },400);
+
+  // accessibility
   textEl.addEventListener('keydown',(e)=>{ if(e.ctrlKey && e.key==='Enter') speakText(); });
-
-  // If user clicks anywhere, attempt to load voices (some browsers require user gesture)
   document.addEventListener('click', ()=>{ if(!voices.length) loadVoices(); }, {once:true});
+
+  // Expose local image path you uploaded earlier (if you want to show it)
+  // Local file path (already uploaded earlier): /mnt/data/IMG_0193.png
+  console.log('If you want to reference your uploaded image: /mnt/data/IMG_0193.png');
+
 </script>
 </body>
 </html>
